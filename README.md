@@ -25,7 +25,11 @@ For one project only, copy them into that project's `.claude/skills/` instead.
 - Python 3.8+ for `repo-health` (standard library only, no network)
 - [GitHub CLI](https://cli.github.com/) (`gh auth login`) for `issue-triage`, and for `pr-description` if you want it to create or edit the PR for you
 
-## Try the health check without an agent
+## Usage
+
+In Claude Code, just ask: "write the PR description for this branch", "triage the open issues", or "run a health check on this repo". The agent picks the matching skill.
+
+The health check also runs on its own, without an agent:
 
 ```bash
 python3 skills/repo-health/scripts/repo_health.py path/to/repo
@@ -61,7 +65,7 @@ python3 skills/repo-health/scripts/repo_health.py path/to/repo
 
 ## Contributing
 
-New skills are welcome. Each skill is a folder under `skills/` with a `SKILL.md` (front matter `name` and `description`, then the steps) and an optional `scripts/` folder. Keep scripts dependency-free where you can, and add a test under `tests/`.
+New skills are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
