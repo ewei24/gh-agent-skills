@@ -12,6 +12,7 @@ FAKE_AWS_KEY = "AKIA" + "ABCDEFGHIJKLMNOP"
 ROOT = Path(__file__).resolve().parent.parent
 HEALTH = ROOT / "skills/repo-health/scripts/repo_health.py"
 INSTALL = ROOT / "install.sh"
+RELEASE = ROOT / "skills/release-notes/scripts/collect_release.py"
 COLLECT = ROOT / "skills/pr-description/scripts/collect_changes.sh"
 
 
@@ -71,6 +72,39 @@ class CollectChangesTest(unittest.TestCase):
         self.assertNotIn("### a.txt", out)
 
 
+class ReleaseNotesTest(unittest.TestCase):
+    def commit(self, repo, msg, body=None):
+        with open(repo / "f", "a") as f:
+            f.write(msg + "\n")
+        run(["git", "add", "-A"], repo)
+        run(["git", "commit", "-qm", msg] + (["-m", body] if body else []), repo)
+
+    def release(self, repo):
+        return run(["python3", str(RELEASE), "--no-github"], repo)
+
+    def test_range_starts_at_last_tag_and_suggests_minor_for_feature(self):
+        repo = make_repo({"a.txt": "a\n"})
+        run(["git", "tag", "v1.2.3"], repo)
+        self.commit(repo, "fix: handle empty input (#5)")
+        self.commit(repo, "feat: add export")
+        out = self.release(repo)
+        self.assertIn("Suggested next version: v1.3.0", out)
+        self.assertIn("Commits: 2   PRs referenced: 1", out)
+        self.assertNotIn("init", out.split("## Commits")[1])
+
+    def test_breaking_change_bumps_major(self):
+        repo = make_repo({"a.txt": "a\n"})
+        run(["git", "tag", "v1.2.3"], repo)
+        self.commit(repo, "refactor: new config format", "BREAKING CHANGE: config.yml renamed")
+        self.assertIn("Suggested next version: v2.0.0", self.release(repo))
+
+    def test_patch_when_only_fixes(self):
+        repo = make_repo({"a.txt": "a\n"})
+        run(["git", "tag", "0.4.1"], repo)
+        self.commit(repo, "Fix crash on save")
+        self.assertIn("Suggested next version: 0.4.2", self.release(repo))
+
+
 class InstallTest(unittest.TestCase):
     def install(self, *args):
         home = Path(tempfile.mkdtemp())
@@ -83,19 +117,19 @@ class InstallTest(unittest.TestCase):
 
     def test_codex_installs_into_agents_skills(self):
         home = self.install("codex")
-        self.assertEqual(self.skills_in(home / ".agents/skills"), ["issue-triage", "pr-description", "repo-health"])
+        self.assertEqual(self.skills_in(home / ".agents/skills"), ["issue-triage", "pr-description", "release-notes", "repo-health"])
         self.assertTrue((home / ".agents/skills/repo-health/agents/openai.yaml").is_file())
         self.assertFalse((home / ".claude").exists())
 
     def test_all_installs_for_both_tools(self):
         home = self.install("all")
-        self.assertEqual(len(self.skills_in(home / ".claude/skills")), 3)
-        self.assertEqual(len(self.skills_in(home / ".agents/skills")), 3)
+        self.assertEqual(len(self.skills_in(home / ".claude/skills")), 4)
+        self.assertEqual(len(self.skills_in(home / ".agents/skills")), 4)
 
     def test_project_install(self):
         project = Path(tempfile.mkdtemp())
         self.install("claude", "--project", str(project))
-        self.assertEqual(len(self.skills_in(project / ".claude/skills")), 3)
+        self.assertEqual(len(self.skills_in(project / ".claude/skills")), 4)
 
 
 class SkillFormatTest(unittest.TestCase):

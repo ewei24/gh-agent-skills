@@ -1,0 +1,6 @@
+interface:
+  display_name: "Release Notes"
+  short_description: "Write release notes and suggest the next version from changes since the last tag"
+  default_prompt: "Write release notes for the changes since the last release."
+policy:
+  allow_implicit_invocation: true
