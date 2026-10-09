@@ -1,0 +1,6 @@
+interface:
+  display_name: "Issue Triage"
+  short_description: "Label, prioritize and dedupe open issues, with your approval"
+  default_prompt: "Triage the open issues in this repo."
+policy:
+  allow_implicit_invocation: true

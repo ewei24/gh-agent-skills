@@ -7,6 +7,8 @@ description: Run a health check on a git repository (docs, license, CI, tests, c
 
 Score a repository out of 100 and tell the user the few fixes that matter most.
 
+> Paths under `scripts/` are relative to this skill's folder (the folder containing this `SKILL.md`), not to the user's repo.
+
 ## Steps
 
 1. Run the checker from anywhere inside the repo (Python 3, no dependencies, no network):

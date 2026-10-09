@@ -1,6 +1,6 @@
 # gh-agent-skills
 
-Agent skills for everyday GitHub chores. Drop them into Claude Code (or any agent that reads `SKILL.md` skills) and ask in plain language:
+Agent skills for everyday GitHub chores. Works with **Claude Code** and **OpenAI Codex** (CLI, IDE extension and the ChatGPT app), or any agent that reads `SKILL.md` skills. Install once, then ask in plain language:
 
 | Skill | Ask it | What it does |
 |---|---|---|
@@ -10,14 +10,24 @@ Agent skills for everyday GitHub chores. Drop them into Claude Code (or any agen
 
 ## Install
 
-Claude Code, for all your projects:
-
 ```bash
 git clone https://github.com/ewei24/gh-agent-skills
-mkdir -p ~/.claude/skills && cp -r gh-agent-skills/skills/* ~/.claude/skills/
+cd gh-agent-skills
+./install.sh            # installs for whichever of Claude Code / Codex you have
 ```
 
-For one project only, copy them into that project's `.claude/skills/` instead.
+Or pick explicitly:
+
+| Command | Installs into | Used by |
+|---|---|---|
+| `./install.sh claude` | `~/.claude/skills/` | Claude Code |
+| `./install.sh codex` | `~/.agents/skills/` | OpenAI Codex (CLI, IDE extension, ChatGPT app) |
+| `./install.sh all` | both | both |
+| `./install.sh codex --project path/to/repo` | `path/to/repo/.agents/skills/` | one project only (same for `claude`) |
+
+Re-run it after `git pull` to update.
+
+**Codex notes:** in Codex you can also type `$` (CLI / IDE) or `@` (ChatGPT app) to pick a skill by name. If a new skill doesn't show up, restart Codex. Each skill ships an `agents/openai.yaml` with its display name and a starter prompt for the ChatGPT app.
 
 ## Requirements
 
@@ -27,7 +37,7 @@ For one project only, copy them into that project's `.claude/skills/` instead.
 
 ## Usage
 
-In Claude Code, just ask: "write the PR description for this branch", "triage the open issues", or "run a health check on this repo". The agent picks the matching skill.
+In Claude Code or Codex, just ask: "write the PR description for this branch", "triage the open issues", or "run a health check on this repo". The agent picks the matching skill.
 
 The health check also runs on its own, without an agent:
 
@@ -55,13 +65,13 @@ python3 skills/repo-health/scripts/repo_health.py path/to/repo
 
 ## 中文说明
 
-一组处理 GitHub 日常杂活的 agent 技能，放进 Claude Code 后直接用自然语言调用：
+一组处理 GitHub 日常杂活的 agent 技能，支持 **Claude Code** 和 **OpenAI Codex**（命令行、IDE 插件和 ChatGPT 桌面版）。装好后直接用自然语言调用：
 
 - **pr-description**：根据分支的提交和 diff 写 PR 标题和描述（之前 / 之后 / 做法 / 测试），仓库有 PR 模板就按模板写。
 - **issue-triage**：给没打标签的 issue 提出类型、优先级、重复项和缺信息的建议，只用仓库已有的标签，你确认后才会改。
 - **repo-health**：给仓库打分（满分 100），检查文档、许可证、CI、测试、社区文件、误提交的密钥、大文件和活跃度，并列出最该先修的几项。
 
-安装方法见上面的 Install 部分。
+安装：克隆仓库后运行 `./install.sh`，它会自动识别你装了 Claude Code 还是 Codex。也可以指定 `./install.sh claude`、`./install.sh codex` 或 `./install.sh all`。在 Codex 里输入 `$` 可以按名字选技能。
 
 ## Contributing
 

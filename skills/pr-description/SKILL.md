@@ -7,6 +7,8 @@ description: Write a pull request title and description from the current branch'
 
 Write a PR title and body a reviewer can read in under a minute, grounded only in what the diff actually changes.
 
+> Paths under `scripts/` are relative to this skill's folder (the folder containing this `SKILL.md`), not to the user's repo.
+
 ## Steps
 
 1. Collect the change set:

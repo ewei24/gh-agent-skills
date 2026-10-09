@@ -9,6 +9,8 @@ Turn a pile of open issues into a labeled, prioritized list, using only the labe
 
 Requires the GitHub CLI (`gh`) to be installed and authenticated.
 
+> Paths under `scripts/` are relative to this skill's folder (the folder containing this `SKILL.md`), not to the user's repo.
+
 ## Steps
 
 1. Fetch the issues and the repo's existing labels:

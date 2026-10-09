@@ -11,6 +11,7 @@ FAKE_AWS_KEY = "AKIA" + "ABCDEFGHIJKLMNOP"
 
 ROOT = Path(__file__).resolve().parent.parent
 HEALTH = ROOT / "skills/repo-health/scripts/repo_health.py"
+INSTALL = ROOT / "install.sh"
 COLLECT = ROOT / "skills/pr-description/scripts/collect_changes.sh"
 
 
@@ -68,6 +69,44 @@ class CollectChangesTest(unittest.TestCase):
         self.assertIn("- Add b", out)
         self.assertIn("### b.txt", out)
         self.assertNotIn("### a.txt", out)
+
+
+class InstallTest(unittest.TestCase):
+    def install(self, *args):
+        home = Path(tempfile.mkdtemp())
+        env = {"HOME": str(home), "PATH": "/usr/bin:/bin"}
+        subprocess.run(["bash", str(INSTALL), *args], env=env, capture_output=True, text=True, check=True)
+        return home
+
+    def skills_in(self, path):
+        return sorted(p.parent.name for p in path.glob("*/SKILL.md"))
+
+    def test_codex_installs_into_agents_skills(self):
+        home = self.install("codex")
+        self.assertEqual(self.skills_in(home / ".agents/skills"), ["issue-triage", "pr-description", "repo-health"])
+        self.assertTrue((home / ".agents/skills/repo-health/agents/openai.yaml").is_file())
+        self.assertFalse((home / ".claude").exists())
+
+    def test_all_installs_for_both_tools(self):
+        home = self.install("all")
+        self.assertEqual(len(self.skills_in(home / ".claude/skills")), 3)
+        self.assertEqual(len(self.skills_in(home / ".agents/skills")), 3)
+
+    def test_project_install(self):
+        project = Path(tempfile.mkdtemp())
+        self.install("claude", "--project", str(project))
+        self.assertEqual(len(self.skills_in(project / ".claude/skills")), 3)
+
+
+class SkillFormatTest(unittest.TestCase):
+    def test_every_skill_has_frontmatter_and_codex_metadata(self):
+        for skill in (ROOT / "skills").iterdir():
+            text = (skill / "SKILL.md").read_text()
+            self.assertTrue(text.startswith("---\n"), skill.name)
+            front = text.split("---")[1]
+            self.assertIn(f"name: {skill.name}\n", front)
+            self.assertIn("description: ", front)
+            self.assertIn("display_name:", (skill / "agents/openai.yaml").read_text())
 
 
 if __name__ == "__main__":

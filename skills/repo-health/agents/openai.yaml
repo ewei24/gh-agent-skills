@@ -1,0 +1,6 @@
+interface:
+  display_name: "Repo Health"
+  short_description: "Score a repo out of 100 and list the fixes that matter most"
+  default_prompt: "Run a health check on this repo."
+policy:
+  allow_implicit_invocation: true
