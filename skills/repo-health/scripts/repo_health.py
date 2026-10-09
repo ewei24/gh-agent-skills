@@ -129,7 +129,7 @@ def check(repo):
                 add("Engineering", "Lockfile", "warn", f"{prefix}{manifest} has no lockfile committed.", 1)
 
     # Security
-    env_files = [n for n in tracked if re.search(r"(^|/)\.env(\.[^/]*)?$", n) and not n.endswith((".example", ".sample", ".template"))]
+    env_files = [n for n in tracked if re.search(r"(^|/)(\.env(\.[^/]*)?|[^/]+\.env)$", n) and not n.endswith((".example", ".sample", ".template"))]
     add("Security", "Committed .env files", "fail" if env_files else "pass",
         ", ".join(env_files) if env_files else "None tracked.", 3)
 

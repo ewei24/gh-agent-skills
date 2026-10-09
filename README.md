@@ -2,6 +2,8 @@
 
 Agent skills for everyday GitHub chores. Works with **Claude Code** and **OpenAI Codex** (CLI, IDE extension and the ChatGPT app), or any agent that reads `SKILL.md` skills. Install once, then ask in plain language:
 
+<p align="center"><img src="docs/demo-repo-health.svg" width="760" alt="Example: asking an agent to health-check a repo. It runs the repo-health skill, scores the repo 38/100, and lists the fixes to make first, starting with a leaked AWS key."></p>
+
 | Skill | Ask it | What it does |
 |---|---|---|
 | [`pr-description`](skills/pr-description/SKILL.md) | "write the PR description" | Reads your branch's commits and diff, writes a title and a Before / After / How / Testing body, follows the repo's PR template if it has one. |

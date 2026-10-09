@@ -47,6 +47,11 @@ class RepoHealthTest(unittest.TestCase):
         self.assertNotIn(FAKE_AWS_KEY, json.dumps(report))
         self.assertEqual(checks["Committed .env files"]["status"], "fail")
 
+    def test_named_env_files_count_but_examples_do_not(self):
+        repo = make_repo({"config/dev.env": "A=1\n", ".env.example": "A=\n"})
+        _, checks = self.health(repo)
+        self.assertEqual(checks["Committed .env files"]["detail"], "config/dev.env")
+
     def test_well_kept_repo_scores_high(self):
         readme = "# x\n\n" + "A useful tool. " * 30 + "\n\n## Install\n\npip install x\n\n## Usage\n\nx run\n"
         repo = make_repo({
