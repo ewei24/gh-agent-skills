@@ -13,7 +13,7 @@ Agent skills for everyday GitHub chores. Drop them into Claude Code (or any agen
 Claude Code, for all your projects:
 
 ```bash
-git clone https://github.com/EthanWei-624/gh-agent-skills
+git clone https://github.com/ewei24/gh-agent-skills
 mkdir -p ~/.claude/skills && cp -r gh-agent-skills/skills/* ~/.claude/skills/
 ```
 
